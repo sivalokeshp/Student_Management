@@ -1,15 +1,12 @@
 <?php
-// db.php - Database connection
-$DB_HOST = 'localhost';
-$DB_USER = 'root';      // change if necessary
-$DB_PASS = '';          // change if necessary
-$DB_NAME = 'student_db';
+$host = "localhost";
+$user = "root";   // your MySQL username
+$pass = "";       // your MySQL password (empty if none)
+$db   = "student_db";
 
-$conn = new mysqli($DB_HOST, $DB_USER, $DB_PASS, $DB_NAME);
+$conn = new mysqli($host, $user, $pass, $db);
+
 if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
-
-// set charset
-$conn->set_charset("utf8mb4");
 ?>

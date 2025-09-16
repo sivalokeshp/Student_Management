@@ -1,34 +1,48 @@
 <?php
 session_start();
-if (!isset($_SESSION['user'])) {
+if (!isset($_SESSION['username'])) {
     header("Location: login.php");
-    exit;
+    exit();
 }
-$username = htmlspecialchars($_SESSION['user']);
 ?>
-<!doctype html>
+
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Dashboard - Student Management</title>
-<link rel="stylesheet" href="styles.css">
+    <title>Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #eef2f7; margin: 0; }
+        .navbar {
+            background: #343a40; padding: 15px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .navbar a {
+            color: white; margin: 0 10px; text-decoration: none; font-weight: bold;
+        }
+        .navbar a:hover { color: #ffc107; }
+        .content { padding: 40px; text-align: center; }
+        .card {
+            background: white; padding: 20px; margin: 20px auto; width: 300px;
+            border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-  <header class="topbar">
-    <h1>Student Management System</h1>
-    <div>
-      Welcome, <strong><?php echo $username; ?></strong> |
-      <a href="add_student.php">Add Student</a> |
-      <a href="view_students.php">View Students</a> |
-      <a href="logout.php">Logout</a>
+    <div class="navbar">
+        <span style="color:white;">Welcome, <?php echo $_SESSION['username']; ?> 👋</span>
+        <div>
+            <a href="add.php">Add</a>
+            <a href="view.php">View</a>
+            <a href="profile.php">My Profile</a>
+            <a href="logout.php">Logout</a>
+        </div>
     </div>
-  </header>
 
-  <main>
-    <h2>Dashboard</h2>
-    <p>This is your dashboard. Use the links above to manage students.</p>
-  </main>
-</div>
+    <div class="content">
+        <h1>Dashboard</h1>
+        <div class="card">
+            <h3>Quick Access</h3>
+            <p>Use the navigation above to manage students.</p>
+        </div>
+    </div>
 </body>
 </html>

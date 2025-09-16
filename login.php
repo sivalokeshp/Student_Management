@@ -1,60 +1,60 @@
 <?php
 session_start();
-include 'db.php';
+include("db.php");
 
-$errors = [];
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    if ($username === '' || $password === '') {
-        $errors[] = "Both fields are required.";
-    } else {
-        $stmt = $conn->prepare("SELECT id, password FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        if ($row = $res->fetch_assoc()) {
-            if (password_verify($password, $row['password'])) {
-                $_SESSION['user'] = $username;
-                header("Location: dashboard.php");
-                exit;
-            } else {
-                $errors[] = "Invalid username or password.";
-            }
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows == 1) {
+        $row = $result->fetch_assoc();
+
+        if ($password === $row['password']) { // plain check (demo only)
+            $_SESSION['username'] = $row['username'];
+            header("Location: dashboard.php");
+            exit();
         } else {
-            $errors[] = "Invalid username or password.";
+            $error = "Invalid password!";
         }
-        $stmt->close();
+    } else {
+        $error = "Invalid username!";
     }
 }
 ?>
-<!doctype html>
+
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>Login - Student Management</title>
-<link rel="stylesheet" href="style.css">
+    <title>Login</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .container {
+            width: 300px; margin: 100px auto; padding: 20px;
+            background: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, button {
+            width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px;
+        }
+        button { background: #28a745; color: white; border: none; cursor: pointer; }
+        button:hover { background: #218838; }
+        .error { color: red; text-align: center; }
+    </style>
 </head>
 <body>
-<div class="container small">
-  <h2>Login</h2>
-
-  <?php if ($errors): ?>
-    <div class="error"><?php echo implode("<br>", array_map('htmlspecialchars', $errors)); ?></div>
-  <?php endif; ?>
-
-  <form method="post" action="login.php">
-    <label>Username</label>
-    <input type="text" name="username" required>
-
-    <label>Password</label>
-    <input type="password" name="password" required>
-
-    <button type="submit">Login</button>
-  </form>
-
-  <p>No account? <a href="register.php">Register here</a>.</p>
-</div>
+    <div class="container">
+        <h2>Login</h2>
+        <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
+        <form method="POST">
+            <input type="text" name="username" placeholder="Enter Username" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <p>Don’t have an account? <a href="register.php">Register</a></p>
+    </div>
 </body>
 </html>
